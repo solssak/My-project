@@ -13,9 +13,9 @@ function saveMenus() {
   localStorage.setItem(MENUSAVED_KEY, JSON.stringify(menuSaved));
 }
 
-function paintMenu(newAdd) {
+function paintMenu(newAdd, index) {
   const buttonText = `
-    <li class="menu-list-item d-flex items-center py-2">
+    <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
       <span class="w-100 pl-2 menu-name">${newAdd}</span>
       <button
         type="button"
@@ -59,6 +59,7 @@ function handleMenuSubmitBtn(e) {
 }
 
 const handleMenuList = function (e) {
+  const menuId = e.target.closest("li").dataset.menuId;
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("수정 값을 입력하세요", "");
     if (value.replace(" ", "").length === 0) {
@@ -68,6 +69,8 @@ const handleMenuList = function (e) {
       return;
     } else {
       e.target.closest("li").querySelector(".menu-name").textContent = value;
+      menuSaved[index] = value;
+      saveMenus();
     }
   }
 
@@ -89,5 +92,9 @@ const savedMenuSaved = localStorage.getItem(MENUSAVED_KEY);
 if (savedMenuSaved !== null) {
   const parsedMenuSaved = JSON.parse(savedMenuSaved);
   menuSaved = parsedMenuSaved;
-  parsedMenuSaved.forEach(paintMenu);
+  // parsedMenuSaved.forEach(paintMenu);
+
+  parsedMenuSaved.forEach((newAdd, index) => {
+    paintMenu(newAdd, index);
+  });
 }
