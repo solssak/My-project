@@ -13,6 +13,11 @@ function saveMenus() {
   localStorage.setItem(MENUSAVED_KEY, JSON.stringify(menuSaved));
 }
 
+const menuCount = () => {
+  const menuCount = menuList.querySelectorAll("li").length;
+  menuCountText.textContent = `총 ${menuCount}개`;
+};
+
 function paintMenu(newAdd, index) {
   const buttonText = `
     <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
@@ -32,26 +37,23 @@ function paintMenu(newAdd, index) {
     </li>
   `;
   menuList.insertAdjacentHTML("beforeend", buttonText);
-
-  const menuCount = menuList.querySelectorAll("li").length;
-  menuCountText.textContent = `총 ${menuCount}개`;
+  menuCount();
 }
 
+// Enter
 function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
   menuSaved.push(newAdd);
-  // paintMenu(newAdd);
   saveMenus();
-
-  // 렌더링
   menuList.innerHTML = "";
   menuSaved.forEach((menu, index) => {
     paintMenu(menu, index);
   });
 }
 
+// 확인 버튼
 function handleMenuSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
@@ -61,9 +63,6 @@ function handleMenuSubmitBtn(e) {
   } else {
     menuSaved.push(newAdd);
     saveMenus();
-    // paintMenu(newAdd);
-
-    // 렌더링
     menuList.innerHTML = "";
     menuSaved.forEach((menu, index) => {
       paintMenu(menu, index);
@@ -88,25 +87,18 @@ const handleMenuList = function (e) {
   }
 
   if (e.target.classList.contains("menu-remove-button")) {
-    if (window.confirm("이 메뉴를 삭제하시겠습니까?")) {
-      // 화면에서 지움
+    if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
 
-      // menuSaved 에서도 지워줘야함
-      const menuId = e.target.closest("li").dataset.menuId; // 선택한 메뉴가 몇 번째인지 가져오기
+      const menuId = e.target.closest("li").dataset.menuId;
       menuSaved.splice(menuId, 1);
-
-      // menuSaved 에서 삭제후 로컬스토리지에 저장
       saveMenus();
-
-      // 렌더링
-      menuList.innerHTML = "";
+      // menuList.innerHTML = "";
       menuSaved.forEach((menu, index) => {
         paintMenu(menu, index);
       });
 
-      const menuCount = menuList.querySelectorAll("li").length;
-      menuCountText.textContent = `총 ${menuCount}개`;
+      menuCount();
     }
   }
 };
@@ -120,8 +112,6 @@ const savedMenuSaved = localStorage.getItem(MENUSAVED_KEY);
 if (savedMenuSaved !== null) {
   const parsedMenuSaved = JSON.parse(savedMenuSaved);
   menuSaved = parsedMenuSaved;
-  // parsedMenuSaved.forEach(paintMenu);
-
   parsedMenuSaved.forEach((newAdd, index) => {
     paintMenu(newAdd, index);
   });
