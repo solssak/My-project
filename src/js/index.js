@@ -93,7 +93,6 @@ const handleMenuList = function (e) {
       const menuId = e.target.closest("li").dataset.menuId;
       menuSaved.splice(menuId, 1);
       saveMenus();
-      // menuList.innerHTML = "";
       menuSaved.forEach((menu, index) => {
         paintMenu(menu, index);
       });
