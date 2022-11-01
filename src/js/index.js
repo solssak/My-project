@@ -1,6 +1,5 @@
 const menuForm = document.getElementById("espresso-menu-form");
 const menuInput = document.querySelector("#espresso-menu-form input");
-// === const menuInput = menuForm.querySelector("input");
 const menuList = document.getElementById("espresso-menu-list");
 const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
@@ -40,7 +39,6 @@ function paintMenu(newAdd, index) {
   menuCount();
 }
 
-// Enter
 function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
@@ -75,8 +73,6 @@ const handleMenuList = function (e) {
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("수정 값을 입력하세요", "");
     if (value.replace(" ", "").length === 0) {
-      // }
-      // if (value === "" || ) {
       alert("메뉴 이름을 입력해주세요.");
       return;
     } else {
