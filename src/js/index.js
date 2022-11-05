@@ -11,6 +11,7 @@ let menuSaved = [];
 function saveMenus() {
   localStorage.setItem(MENUSAVED_KEY, JSON.stringify(menuSaved));
 }
+const savedMenuSaved = localStorage.getItem(MENUSAVED_KEY);
 
 const menuCount = () => {
   const menuCount = menuList.querySelectorAll("li").length;
@@ -51,7 +52,6 @@ function handleAddSubmit(e) {
   });
 }
 
-// 확인 버튼
 function handleMenuSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
@@ -101,8 +101,6 @@ const handleMenuList = function (e) {
 menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
-
-const savedMenuSaved = localStorage.getItem(MENUSAVED_KEY);
 
 if (savedMenuSaved !== null) {
   const parsedMenuSaved = JSON.parse(savedMenuSaved);
