@@ -3,17 +3,22 @@ const menuInput = document.querySelector("#espresso-menu-form input");
 const menuList = document.getElementById("espresso-menu-list");
 const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
+const nav = document.querySelector("nav");
 
-const MENUSAVED_KEY = "menuSaved";
+let menu = {
+  espresso: [],
+  frappuccino: [],
+  blended: [],
+  teavana: [],
+  desert: [],
+};
 
-let menuSaved = [];
-
-function saveMenus() {
-  localStorage.setItem(MENUSAVED_KEY, JSON.stringify(menuSaved));
+function setLocalStorage() {
+  localStorage.setItem("menu", JSON.stringify(menu));
 }
-const savedMenuSaved = localStorage.getItem(MENUSAVED_KEY);
+const getLocalStorage = localStorage.getItem("menu");
 
-const menuCount = () => {
+const updateMenuCount = () => {
   const menuCount = menuList.querySelectorAll("li").length;
   menuCountText.textContent = `총 ${menuCount}개`;
 };
@@ -37,17 +42,17 @@ function paintMenu(newAdd, index) {
     </li>
   `;
   menuList.insertAdjacentHTML("beforeend", buttonText);
-  menuCount();
+  updateMenuCount();
 }
 
 function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
-  menuSaved.push(newAdd);
-  saveMenus();
+  menu.push(newAdd);
+  setLocalStorage();
   menuList.innerHTML = "";
-  menuSaved.forEach((menu, index) => {
+  menu.forEach((menu, index) => {
     paintMenu(menu, index);
   });
 }
@@ -59,10 +64,10 @@ function handleMenuSubmitBtn(e) {
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    menuSaved.push(newAdd);
-    saveMenus();
+    menu.push(newAdd);
+    setLocalStorage();
     menuList.innerHTML = "";
-    menuSaved.forEach((menu, index) => {
+    menu.forEach((menu, index) => {
       paintMenu(menu, index);
     });
   }
@@ -71,14 +76,14 @@ function handleMenuSubmitBtn(e) {
 const handleMenuList = function (e) {
   const menuId = e.target.closest("li").dataset.menuId;
   if (e.target.classList.contains("menu-edit-button")) {
-    const value = prompt("수정 값을 입력하세요", "");
+    const value = prompt("메뉴명을 수정하세요", "");
     if (value.replace(" ", "").length === 0) {
       alert("메뉴 이름을 입력해주세요.");
       return;
     } else {
       e.target.closest("li").querySelector(".menu-name").textContent = value;
-      menuSaved[menuId] = value;
-      saveMenus();
+      menu[menuId] = value;
+      setLocalStorage();
     }
   }
 
@@ -87,25 +92,33 @@ const handleMenuList = function (e) {
       e.target.closest("li").remove();
 
       const menuId = e.target.closest("li").dataset.menuId;
-      menuSaved.splice(menuId, 1);
-      saveMenus();
-      menuSaved.forEach((menu, index) => {
+      menu.splice(menuId, 1);
+      setLocalStorage();
+      menu.forEach((menu, index) => {
         paintMenu(menu, index);
       });
 
-      menuCount();
+      updateMenuCount();
     }
   }
 };
 
+const handleNav = (e) => {
+  const isCategoryButton = e.target.classList.contains("cafe-category-name");
+  if (isCategoryButton) {
+    const categoryName = e.target.dataset.categoryName;
+  }
+};
+
+nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 
-if (savedMenuSaved !== null) {
-  const parsedMenuSaved = JSON.parse(savedMenuSaved);
-  menuSaved = parsedMenuSaved;
-  parsedMenuSaved.forEach((newAdd, index) => {
+if (getLocalStorage !== null) {
+  const parsedmenu = JSON.parse(getLocalStorage);
+  menu = parsedmenu;
+  parsedmenu.forEach((newAdd, index) => {
     paintMenu(newAdd, index);
   });
 }
