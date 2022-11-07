@@ -5,13 +5,14 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
-let menu = {
-  espresso: [],
-  frappuccino: [],
-  blended: [],
-  teavana: [],
-  desert: [],
-};
+let menu = [];
+// {
+//   espresso: [],
+//   frappuccino: [],
+//   blended: [],
+//   teavana: [],
+//   desert: []
+// };
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -47,14 +48,19 @@ function paintMenu(newAdd, index) {
 
 function handleAddSubmit(e) {
   e.preventDefault();
+
   const newAdd = menuInput.value;
-  menuInput.value = "";
+
   menu.push(newAdd);
+
   setLocalStorage();
+
   menuList.innerHTML = "";
   menu.forEach((menu, index) => {
     paintMenu(menu, index);
   });
+
+  menuInput.value = "";
 }
 
 function handleMenuSubmitBtn(e) {
@@ -103,14 +109,14 @@ const handleMenuList = function (e) {
   }
 };
 
-const handleNav = (e) => {
-  const isCategoryButton = e.target.classList.contains("cafe-category-name");
-  if (isCategoryButton) {
-    const categoryName = e.target.dataset.categoryName;
-  }
-};
+// const handleNav = (e) => {
+// const isCategoryButton = e.target.classList.contains("cafe-category-name");
+//   if (isCategoryButton) {
+//     const categoryName = e.target.dataset.categoryName;
+//   }
+// };
 
-nav.addEventListener("click", handleNav);
+// nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
