@@ -11,12 +11,10 @@ let menu = [];
 //   frappuccino: [],
 //   blended: [],
 //   teavana: [],
-//   desert: []
+//   desert: [],
 // };
 
-function getLocalStorage() {
-  return localStorage.getItem("menu");
-}
+const getLocalStorage = localStorage.getItem("menu");
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -34,7 +32,7 @@ function paintMenu(newAdd, index) {
       <button
         type="button"
         class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
-      >
+      >   
         수정
       </button>
       <button
@@ -52,18 +50,19 @@ function paintMenu(newAdd, index) {
 function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
+  menuInput.value = "";
   menu.push(newAdd);
   setLocalStorage();
   menuList.innerHTML = "";
   menu.forEach((menu, index) => {
     paintMenu(menu, index);
   });
-  menuInput.value = "";
 }
 
 function handleMenuSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
+  menuInput.value = "";
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
@@ -74,7 +73,6 @@ function handleMenuSubmitBtn(e) {
       paintMenu(menu, index);
     });
   }
-  menuInput.value = "";
 }
 
 const handleMenuList = function (e) {
@@ -98,19 +96,20 @@ const handleMenuList = function (e) {
       const menuId = e.target.closest("li").dataset.menuId;
       menu.splice(menuId, 1);
       setLocalStorage();
+      menuList.innerHTML = "";
       menu.forEach((menu, index) => {
         paintMenu(menu, index);
       });
-
       updateMenuCount();
     }
   }
 };
 
 // const handleNav = (e) => {
-// const isCategoryButton = e.target.classList.contains("cafe-category-name");
+//   const isCategoryButton = e.target.classList.contains("cafe-category-name");
 //   if (isCategoryButton) {
 //     const categoryName = e.target.dataset.categoryName;
+//     console.log(categoryName);
 //   }
 // };
 
