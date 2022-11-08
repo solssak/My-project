@@ -14,10 +14,13 @@ let menu = [];
 //   desert: []
 // };
 
+function getLocalStorage() {
+  return localStorage.getItem("menu");
+}
+
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
 }
-const getLocalStorage = localStorage.getItem("menu");
 
 const updateMenuCount = () => {
   const menuCount = menuList.querySelectorAll("li").length;
@@ -48,25 +51,19 @@ function paintMenu(newAdd, index) {
 
 function handleAddSubmit(e) {
   e.preventDefault();
-
   const newAdd = menuInput.value;
-
   menu.push(newAdd);
-
   setLocalStorage();
-
   menuList.innerHTML = "";
   menu.forEach((menu, index) => {
     paintMenu(menu, index);
   });
-
   menuInput.value = "";
 }
 
 function handleMenuSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
-  menuInput.value = "";
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
@@ -77,6 +74,7 @@ function handleMenuSubmitBtn(e) {
       paintMenu(menu, index);
     });
   }
+  menuInput.value = "";
 }
 
 const handleMenuList = function (e) {
