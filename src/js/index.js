@@ -5,14 +5,15 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
-let menu = [];
-// {
-//   espresso: [],
-//   frappuccino: [],
-//   blended: [],
-//   teavana: [],
-//   desert: [],
-// };
+let menu = {
+  espresso: [],
+  frappuccino: [],
+  blended: [],
+  teavana: [],
+  desert: [],
+};
+
+let currentCategory = "espresso";
 
 const getLocalStorage = localStorage.getItem("menu");
 
@@ -51,10 +52,10 @@ function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
-  menu.push(newAdd);
+  menu[currentCategory].push(newAdd);
   setLocalStorage();
   menuList.innerHTML = "";
-  menu.forEach((menu, index) => {
+  menu[currentCategory].forEach((menu, index) => {
     paintMenu(menu, index);
   });
 }
@@ -66,10 +67,10 @@ function handleMenuSubmitBtn(e) {
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    menu.push(newAdd);
+    menu[currentCategory].push(newAdd);
     setLocalStorage();
     menuList.innerHTML = "";
-    menu.forEach((menu, index) => {
+    menu[currentCategory].forEach((menu, index) => {
       paintMenu(menu, index);
     });
   }
@@ -84,7 +85,7 @@ const handleMenuList = function (e) {
       return;
     } else {
       e.target.closest("li").querySelector(".menu-name").textContent = value;
-      menu[menuId] = value;
+      menu[currentCategory][menuId] = value;
       setLocalStorage();
     }
   }
@@ -94,10 +95,10 @@ const handleMenuList = function (e) {
       e.target.closest("li").remove();
 
       const menuId = e.target.closest("li").dataset.menuId;
-      menu.splice(menuId, 1);
+      menu[currentCategory].splice(menuId, 1);
       setLocalStorage();
       menuList.innerHTML = "";
-      menu.forEach((menu, index) => {
+      menu[currentCategory].forEach((menu, index) => {
         paintMenu(menu, index);
       });
       updateMenuCount();
@@ -105,15 +106,17 @@ const handleMenuList = function (e) {
   }
 };
 
-// const handleNav = (e) => {
-//   const isCategoryButton = e.target.classList.contains("cafe-category-name");
-//   if (isCategoryButton) {
-//     const categoryName = e.target.dataset.categoryName;
-//     console.log(categoryName);
-//   }
-// };
+const handleNav = (e) => {
+  const isCategoryButton = e.target.classList.contains("cafe-category-name");
+  if (isCategoryButton) {
+    currentCategory = e.target.dataset.categoryName;
+    document.querySelector(
+      "#category-name"
+    ).textContent = `${e.target.textContent} 메뉴 관리`;
+  }
+};
 
-// nav.addEventListener("click", handleNav);
+nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
@@ -121,7 +124,7 @@ menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 if (getLocalStorage !== null) {
   const parsedmenu = JSON.parse(getLocalStorage);
   menu = parsedmenu;
-  parsedmenu.forEach((newAdd, index) => {
+  parsedmenu[currentCategory].forEach((newAdd, index) => {
     paintMenu(newAdd, index);
   });
 }
