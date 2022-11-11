@@ -13,6 +13,7 @@ let menu = {
   desert: [],
 };
 
+// 최초 페이지
 let currentCategory = "espresso";
 
 const getLocalStorage = localStorage.getItem("menu");
@@ -21,30 +22,41 @@ function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
 }
 
+// 메뉴 수 카운트
 const updateMenuCount = () => {
   const menuCount = menuList.querySelectorAll("li").length;
   menuCountText.textContent = `총 ${menuCount}개`;
 };
 
-function paintMenu(newAdd, index) {
-  const buttonText = `
-    <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
-      <span class="w-100 pl-2 menu-name">${newAdd}</span>
-      <button
+function paintMenu() {
+  menuList.innerHTML = "";
+  menu[currentCategory].map((newAdd, index) => {
+    const template = `
+      <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
+        <span class="w-100 pl-2 menu-name">${newAdd}</span>
+        <button
         type="button"
-        class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
-      >   
-        수정
-      </button>
-      <button
-        type="button"
-        class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
+        class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
       >
-        삭제
+        품절
       </button>
-    </li>
-  `;
-  menuList.insertAdjacentHTML("beforeend", buttonText);
+        <button
+          type="button"
+          class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button"
+        >   
+          수정
+        </button>
+        <button
+          type="button"
+          class="bg-gray-50 text-gray-500 text-sm menu-remove-button"
+        >
+          삭제
+        </button>
+      </li>
+    `;
+    menuList.insertAdjacentHTML("beforeend", template);
+  });
+
   updateMenuCount();
 }
 
@@ -54,10 +66,7 @@ function handleAddSubmit(e) {
   menuInput.value = "";
   menu[currentCategory].push(newAdd);
   setLocalStorage();
-  menuList.innerHTML = "";
-  menu[currentCategory].forEach((menu, index) => {
-    paintMenu(menu, index);
-  });
+  paintMenu();
 }
 
 function handleMenuSubmitBtn(e) {
@@ -69,10 +78,7 @@ function handleMenuSubmitBtn(e) {
   } else {
     menu[currentCategory].push(newAdd);
     setLocalStorage();
-    menuList.innerHTML = "";
-    menu[currentCategory].forEach((menu, index) => {
-      paintMenu(menu, index);
-    });
+    paintMenu();
   }
 }
 
@@ -93,16 +99,18 @@ const handleMenuList = function (e) {
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
-
       const menuId = e.target.closest("li").dataset.menuId;
       menu[currentCategory].splice(menuId, 1);
       setLocalStorage();
-      menuList.innerHTML = "";
-      menu[currentCategory].forEach((menu, index) => {
-        paintMenu(menu, index);
-      });
-      updateMenuCount();
+      paintMenu();
     }
+  }
+
+  if (e.target.classList.contains("menu-sold-out-button")) {
+    e.target
+      .closest("li")
+      .querySelector(".menu-name")
+      .classList.toggle("sold-out");
   }
 };
 
@@ -113,6 +121,7 @@ const handleNav = (e) => {
     document.querySelector(
       "#category-name"
     ).textContent = `${e.target.textContent} 메뉴 관리`;
+    paintMenu();
   }
 };
 
@@ -124,7 +133,10 @@ menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 if (getLocalStorage !== null) {
   const parsedmenu = JSON.parse(getLocalStorage);
   menu = parsedmenu;
-  parsedmenu[currentCategory].forEach((newAdd, index) => {
-    paintMenu(newAdd, index);
-  });
+  paintMenu();
 }
+
+// 1. 메뉴 수정/삭제하기 >> ( menu : [] -> menu : {})
+// 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
+// 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
+// 4. 품절 >> classList.toggle 로 구현
