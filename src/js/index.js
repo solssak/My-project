@@ -60,6 +60,7 @@ function paintMenu() {
   updateMenuCount();
 }
 
+// 메뉴 입력 (Enter)
 function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
@@ -69,6 +70,7 @@ function handleAddSubmit(e) {
   paintMenu();
 }
 
+// 메뉴 입력 (확인 버튼)
 function handleMenuSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
@@ -84,6 +86,8 @@ function handleMenuSubmitBtn(e) {
 
 const handleMenuList = function (e) {
   const menuId = e.target.closest("li").dataset.menuId;
+
+  // 수정 기능
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("메뉴명을 수정하세요", "");
     if (value.replace(" ", "").length === 0) {
@@ -96,6 +100,7 @@ const handleMenuList = function (e) {
     }
   }
 
+  // 삭제 기능
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
@@ -106,6 +111,7 @@ const handleMenuList = function (e) {
     }
   }
 
+  // 품절 기능
   if (e.target.classList.contains("menu-sold-out-button")) {
     e.target
       .closest("li")
