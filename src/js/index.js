@@ -5,6 +5,8 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
+const BASE_URL = "http://localhost:3000/api";
+
 let menu = {
   espresso: [],
   frappuccino: [],
@@ -78,9 +80,18 @@ function handleMenuSubmitBtn(e) {
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
+    fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: newAdd }),
+    }).then((response) => {
+      console.log(response);
+    });
     menu[currentCategory].push(newAdd);
-    setLocalStorage();
-    paintMenu();
+    // setLocalStorage();
+    // paintMenu();
   }
 }
 
