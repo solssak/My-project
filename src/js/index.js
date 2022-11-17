@@ -157,3 +157,4 @@ if (getLocalStorage !== null) {
 // 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
 // 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
 // 4. 품절 >> classList.toggle 로 구현
+// 5. git branch
