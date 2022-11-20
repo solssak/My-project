@@ -18,7 +18,7 @@ let menu = {
 // 최초 페이지
 let currentCategory = "espresso";
 
-const getLocalStorage = localStorage.getItem("menu");
+const localStorageItems = localStorage.getItem("menu");
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -147,8 +147,8 @@ menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 
-if (getLocalStorage !== null) {
-  const parsedmenu = JSON.parse(getLocalStorage);
+if (localStorageItems !== null) {
+  const parsedmenu = JSON.parse(localStorageItems);
   menu = parsedmenu;
   paintMenu();
 }
@@ -157,4 +157,4 @@ if (getLocalStorage !== null) {
 // 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
 // 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
 // 4. 품절 >> classList.toggle 로 구현
-// 5. git branch test ??
+// 5. git branch test ??//
