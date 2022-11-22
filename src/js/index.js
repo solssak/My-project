@@ -5,8 +5,6 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
-const BASE_URL = "http://localhost:3000/api";
-
 let menu = {
   espresso: [],
   frappuccino: [],
@@ -18,7 +16,8 @@ let menu = {
 // 최초 페이지
 let currentCategory = "espresso";
 
-const localStorageItems = localStorage.getItem("menu");
+// const getLocalStorage = localStorage.getItem("menu");
+const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -80,18 +79,9 @@ function handleMenuSubmitBtn(e) {
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: newAdd }),
-    }).then((response) => {
-      console.log(response);
-    });
     menu[currentCategory].push(newAdd);
-    // setLocalStorage();
-    // paintMenu();
+    setLocalStorage();
+    paintMenu();
   }
 }
 
@@ -147,9 +137,10 @@ menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 
-if (localStorageItems !== null) {
-  const parsedmenu = JSON.parse(localStorageItems);
-  menu = parsedmenu;
+if (getLocalStorage !== null) {
+  // const parsedmenu = JSON.parse(getLocalStorage);
+  // menu = parsedmenu;
+  menu = getLocalStorage;
   paintMenu();
 }
 
@@ -157,4 +148,3 @@ if (localStorageItems !== null) {
 // 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
 // 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
 // 4. 품절 >> classList.toggle 로 구현
-// 5. git branch test ??//
