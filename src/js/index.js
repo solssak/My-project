@@ -5,9 +5,6 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
-// branch test
-// tete
-
 let menu = {
   espresso: [],
   frappuccino: [],
@@ -19,7 +16,8 @@ let menu = {
 // 최초 페이지
 let currentCategory = "espresso";
 
-const getLocalStorage = localStorage.getItem("menu");
+// const getLocalStorage = localStorage.getItem("menu");
+const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -140,8 +138,9 @@ menuList.addEventListener("click", handleMenuList);
 menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
 
 if (getLocalStorage !== null) {
-  const parsedmenu = JSON.parse(getLocalStorage);
-  menu = parsedmenu;
+  // const parsedmenu = JSON.parse(getLocalStorage);
+  // menu = parsedmenu;
+  menu = getLocalStorage;
   paintMenu();
 }
 
