@@ -17,11 +17,11 @@ let menu = {
 let currentCategory = "espresso";
 
 // const getLocalStorage = localStorage.getItem("menu");
-const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
 }
+const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
 
 // 메뉴 수 카운트
 const updateMenuCount = () => {
@@ -34,7 +34,9 @@ function paintMenu() {
   menu[currentCategory].map((newAdd, index) => {
     const template = `
       <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
-        <span class="w-100 pl-2 menu-name">${newAdd}</span>
+        <span class="${
+          newAdd.soldOut ? "sold-out" : ""
+        } w-100 pl-2 menu-name">${newAdd.name}</span>
         <button
         type="button"
         class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
@@ -66,7 +68,7 @@ function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
-  menu[currentCategory].push(newAdd);
+  menu[currentCategory].push({ name: newAdd });
   setLocalStorage();
   paintMenu();
 }
@@ -79,7 +81,7 @@ function handleMenuSubmitBtn(e) {
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    menu[currentCategory].push(newAdd);
+    menu[currentCategory].push({ name: newAdd });
     setLocalStorage();
     paintMenu();
   }
@@ -114,11 +116,20 @@ const handleMenuList = function (e) {
 
   // 품절 기능
   if (e.target.classList.contains("menu-sold-out-button")) {
-    e.target
-      .closest("li")
-      .querySelector(".menu-name")
-      .classList.toggle("sold-out");
+    soldOutMenu(e);
+    // e.target
+    //   .closest("li")
+    //   .querySelector(".menu-name")
+    //   .classList.toggle("sold-out");
   }
+};
+
+const soldOutMenu = (e) => {
+  const menuId = e.target.closest("li").dataset.menuId;
+  menu[currentCategory][menuId].soldOut =
+    !menu[currentCategory][menuId].soldOut;
+  setLocalStorage(menu);
+  paintMenu();
 };
 
 const handleNav = (e) => {
