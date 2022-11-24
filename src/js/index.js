@@ -31,12 +31,12 @@ const updateMenuCount = () => {
 
 function paintMenu() {
   menuList.innerHTML = "";
-  menu[currentCategory].map((newAdd, index) => {
+  menu[currentCategory].map((item, index) => {
     const template = `
       <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
-        <span class="${
-          newAdd.soldOut ? "sold-out" : ""
-        } w-100 pl-2 menu-name">${newAdd.name}</span>
+        <span class="${item.soldOut ? "sold-out" : ""} w-100 pl-2 menu-name">${
+      item.name
+    }</span>
         <button
         type="button"
         class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
@@ -74,7 +74,7 @@ function handleAddSubmit(e) {
 }
 
 // 메뉴 입력 (확인 버튼)
-function handleMenuSubmitBtn(e) {
+function handleAddSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
@@ -117,10 +117,6 @@ const handleMenuList = function (e) {
   // 품절 기능
   if (e.target.classList.contains("menu-sold-out-button")) {
     soldOutMenu(e);
-    // e.target
-    //   .closest("li")
-    //   .querySelector(".menu-name")
-    //   .classList.toggle("sold-out");
   }
 };
 
@@ -128,7 +124,7 @@ const soldOutMenu = (e) => {
   const menuId = e.target.closest("li").dataset.menuId;
   menu[currentCategory][menuId].soldOut =
     !menu[currentCategory][menuId].soldOut;
-  setLocalStorage(menu);
+  setLocalStorage();
   paintMenu();
 };
 
@@ -146,7 +142,7 @@ const handleNav = (e) => {
 nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
 menuList.addEventListener("click", handleMenuList);
-menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
+menuSubmitBtn.addEventListener("click", handleAddSubmitBtn);
 
 if (getLocalStorage !== null) {
   // const parsedmenu = JSON.parse(getLocalStorage);
