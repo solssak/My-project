@@ -16,12 +16,10 @@ let menu = {
 // 최초 페이지
 let currentCategory = "espresso";
 
-// const getLocalStorage = localStorage.getItem("menu");
-const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
-
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
 }
+const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
 
 // 메뉴 수 카운트
 const updateMenuCount = () => {
@@ -29,12 +27,15 @@ const updateMenuCount = () => {
   menuCountText.textContent = `총 ${menuCount}개`;
 };
 
+// 렌더
 function paintMenu() {
   menuList.innerHTML = "";
-  menu[currentCategory].map((newAdd, index) => {
+  menu[currentCategory].map((item, index) => {
     const template = `
       <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
-        <span class="w-100 pl-2 menu-name">${newAdd}</span>
+        <span class="${item.soldOut ? "sold-out" : ""} w-100 pl-2 menu-name">${
+      item.name
+    }</span>
         <button
         type="button"
         class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
@@ -66,29 +67,29 @@ function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
-  menu[currentCategory].push(newAdd);
+  menu[currentCategory].push({ name: newAdd });
   setLocalStorage();
   paintMenu();
 }
 
 // 메뉴 입력 (확인 버튼)
-function handleMenuSubmitBtn(e) {
+function handleAddSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    menu[currentCategory].push(newAdd);
+    menu[currentCategory].push({ name: newAdd });
     setLocalStorage();
     paintMenu();
   }
 }
 
-const handleMenuList = function (e) {
+// 메뉴 수정
+const updateMenuName = (e) => {
   const menuId = e.target.closest("li").dataset.menuId;
 
-  // 수정 기능
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("메뉴명을 수정하세요", "");
     if (value.replace(" ", "").length === 0) {
@@ -100,8 +101,12 @@ const handleMenuList = function (e) {
       setLocalStorage();
     }
   }
+};
 
-  // 삭제 기능
+// 메뉴 삭제
+const removeMenuName = (e) => {
+  const menuId = e.target.closest("li").dataset.menuId;
+
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
@@ -111,16 +116,21 @@ const handleMenuList = function (e) {
       paintMenu();
     }
   }
+};
 
-  // 품절 기능
+// 품절
+const soldOutMenu = (e) => {
+  const menuId = e.target.closest("li").dataset.menuId;
+
   if (e.target.classList.contains("menu-sold-out-button")) {
-    e.target
-      .closest("li")
-      .querySelector(".menu-name")
-      .classList.toggle("sold-out");
+    menu[currentCategory][menuId].soldOut =
+      !menu[currentCategory][menuId].soldOut;
+    setLocalStorage();
+    paintMenu();
   }
 };
 
+// 카테고리명 출력
 const handleNav = (e) => {
   const isCategoryButton = e.target.classList.contains("cafe-category-name");
   if (isCategoryButton) {
@@ -134,17 +144,12 @@ const handleNav = (e) => {
 
 nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
-menuList.addEventListener("click", handleMenuList);
-menuSubmitBtn.addEventListener("click", handleMenuSubmitBtn);
+menuList.addEventListener("click", soldOutMenu);
+menuList.addEventListener("click", updateMenuName);
+menuList.addEventListener("click", removeMenuName);
+menuSubmitBtn.addEventListener("click", handleAddSubmitBtn);
 
 if (getLocalStorage !== null) {
-  // const parsedmenu = JSON.parse(getLocalStorage);
-  // menu = parsedmenu;
   menu = getLocalStorage;
   paintMenu();
 }
-
-// 1. 메뉴 수정/삭제하기 >> ( menu : [] -> menu : {})
-// 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
-// 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
-// 4. 품절 >> classList.toggle 로 구현
