@@ -153,5 +153,6 @@ if (getLocalStorage !== null) {
 
 // 1. 메뉴 수정/삭제하기 >> ( menu : [] -> menu : {})
 // 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
-// 3. 카테고리별 화면 업데이트 >> handleNav 에 paintMenu() 추가
-// 4. 품절 >> classList.toggle 로 구현
+
+// 이벤트 위임 이해
+// 수정, 삭제, 품절 분리
