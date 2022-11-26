@@ -27,6 +27,8 @@ const updateMenuCount = () => {
   menuCountText.textContent = `총 ${menuCount}개`;
 };
 
+const menuId = e.target.closest("li").dataset.menuId;
+
 // 렌더
 function paintMenu() {
   menuList.innerHTML = "";
@@ -88,8 +90,6 @@ function handleAddSubmitBtn(e) {
 
 // 메뉴 수정
 const updateMenuName = (e) => {
-  const menuId = e.target.closest("li").dataset.menuId;
-
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("메뉴명을 수정하세요", "");
     if (value.replace(" ", "").length === 0) {
@@ -105,8 +105,6 @@ const updateMenuName = (e) => {
 
 // 메뉴 삭제
 const removeMenuName = (e) => {
-  const menuId = e.target.closest("li").dataset.menuId;
-
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
@@ -120,8 +118,6 @@ const removeMenuName = (e) => {
 
 // 품절
 const soldOutMenu = (e) => {
-  const menuId = e.target.closest("li").dataset.menuId;
-
   if (e.target.classList.contains("menu-sold-out-button")) {
     menu[currentCategory][menuId].soldOut =
       !menu[currentCategory][menuId].soldOut;
