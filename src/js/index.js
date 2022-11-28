@@ -5,6 +5,8 @@ const menuCountText = document.querySelector(".menu-count");
 const menuSubmitBtn = document.querySelector("#espresso-menu-submit-button");
 const nav = document.querySelector("nav");
 
+const BASE_URL = "http://localhost:3000/api";
+
 let menu = {
   espresso: [],
   frappuccino: [],
@@ -15,8 +17,6 @@ let menu = {
 
 // 최초 페이지
 let currentCategory = "espresso";
-
-// const getLocalStorage = localStorage.getItem("menu");
 
 function setLocalStorage() {
   localStorage.setItem("menu", JSON.stringify(menu));
@@ -29,6 +29,7 @@ const updateMenuCount = () => {
   menuCountText.textContent = `총 ${menuCount}개`;
 };
 
+// 렌더
 function paintMenu() {
   menuList.innerHTML = "";
   menu[currentCategory].map((item, index) => {
@@ -64,13 +65,35 @@ function paintMenu() {
 }
 
 // 메뉴 입력 (Enter)
-function handleAddSubmit(e) {
+async function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
   menuInput.value = "";
-  menu[currentCategory].push({ name: newAdd });
-  setLocalStorage();
-  paintMenu();
+
+  await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ name: newAdd }),
+  })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+    });
+
+  await fetch(`${BASE_URL}/category/${currentCategory}/menu`)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data);
+    });
+  // menu[currentCategory].push({ name: newAdd });
+  // setLocalStorage();
+  // paintMenu();
 }
 
 // 메뉴 입력 (확인 버튼)
@@ -87,10 +110,10 @@ function handleAddSubmitBtn(e) {
   }
 }
 
-const handleMenuList = function (e) {
+// 메뉴 수정
+const updateMenuName = (e) => {
   const menuId = e.target.closest("li").dataset.menuId;
 
-  // 수정 기능
   if (e.target.classList.contains("menu-edit-button")) {
     const value = prompt("메뉴명을 수정하세요", "");
     if (value.replace(" ", "").length === 0) {
@@ -102,32 +125,35 @@ const handleMenuList = function (e) {
       setLocalStorage();
     }
   }
+};
 
-  // 삭제 기능
+// 메뉴 삭제
+const removeMenuName = (e) => {
+  const menuId = e.target.closest("li").dataset.menuId;
+
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
-      const menuId = e.target.closest("li").dataset.menuId;
       menu[currentCategory].splice(menuId, 1);
       setLocalStorage();
       paintMenu();
     }
   }
+};
 
-  // 품절 기능
+// 품절
+const soldOutMenu = (e) => {
+  const menuId = e.target.closest("li").dataset.menuId;
+
   if (e.target.classList.contains("menu-sold-out-button")) {
-    soldOutMenu(e);
+    menu[currentCategory][menuId].soldOut =
+      !menu[currentCategory][menuId].soldOut;
+    setLocalStorage();
+    paintMenu();
   }
 };
 
-const soldOutMenu = (e) => {
-  const menuId = e.target.closest("li").dataset.menuId;
-  menu[currentCategory][menuId].soldOut =
-    !menu[currentCategory][menuId].soldOut;
-  setLocalStorage();
-  paintMenu();
-};
-
+// 카테고리명 출력
 const handleNav = (e) => {
   const isCategoryButton = e.target.classList.contains("cafe-category-name");
   if (isCategoryButton) {
@@ -141,18 +167,12 @@ const handleNav = (e) => {
 
 nav.addEventListener("click", handleNav);
 menuForm.addEventListener("submit", handleAddSubmit);
-menuList.addEventListener("click", handleMenuList);
+menuList.addEventListener("click", soldOutMenu);
+menuList.addEventListener("click", updateMenuName);
+menuList.addEventListener("click", removeMenuName);
 menuSubmitBtn.addEventListener("click", handleAddSubmitBtn);
 
 if (getLocalStorage !== null) {
-  // const parsedmenu = JSON.parse(getLocalStorage);
-  // menu = parsedmenu;
   menu = getLocalStorage;
   paintMenu();
 }
-
-// 1. 메뉴 수정/삭제하기 >> ( menu : [] -> menu : {})
-// 2. 리팩토링 >> forEach -> map >> 코드 약 20줄 줄임
-
-// 이벤트 위임 이해
-// 수정, 삭제, 품절 분리
