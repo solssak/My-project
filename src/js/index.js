@@ -18,10 +18,10 @@ let menu = {
 // 최초 페이지
 let currentCategory = "espresso";
 
-function setLocalStorage() {
+function LocalStorageSet() {
   localStorage.setItem("menu", JSON.stringify(menu));
 }
-const getLocalStorage = JSON.parse(localStorage.getItem("menu"));
+const LocalStorageGet = JSON.parse(localStorage.getItem("menu"));
 
 // 메뉴 수 카운트
 const updateMenuCount = () => {
@@ -92,7 +92,7 @@ async function handleAddSubmit(e) {
       console.log(data);
     });
   // menu[currentCategory].push({ name: newAdd });
-  // setLocalStorage();
+  // LocalStorageSet();
   // paintMenu();
 }
 
@@ -105,7 +105,7 @@ function handleAddSubmitBtn(e) {
     alert("메뉴 이름을 입력해주세요.");
   } else {
     menu[currentCategory].push({ name: newAdd });
-    setLocalStorage();
+    LocalStorageSet();
     paintMenu();
   }
 }
@@ -122,7 +122,7 @@ const updateMenuName = (e) => {
     } else {
       e.target.closest("li").querySelector(".menu-name").textContent = value;
       menu[currentCategory][menuId] = value;
-      setLocalStorage();
+      LocalStorageSet();
     }
   }
 };
@@ -135,7 +135,7 @@ const removeMenuName = (e) => {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
       menu[currentCategory].splice(menuId, 1);
-      setLocalStorage();
+      LocalStorageSet();
       paintMenu();
     }
   }
@@ -148,7 +148,7 @@ const soldOutMenu = (e) => {
   if (e.target.classList.contains("menu-sold-out-button")) {
     menu[currentCategory][menuId].soldOut =
       !menu[currentCategory][menuId].soldOut;
-    setLocalStorage();
+    LocalStorageSet();
     paintMenu();
   }
 };
@@ -172,7 +172,7 @@ menuList.addEventListener("click", updateMenuName);
 menuList.addEventListener("click", removeMenuName);
 menuSubmitBtn.addEventListener("click", handleAddSubmitBtn);
 
-if (getLocalStorage !== null) {
-  menu = getLocalStorage;
+if (LocalStorageGet !== null) {
+  menu = LocalStorageGet;
   paintMenu();
 }
