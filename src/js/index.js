@@ -68,7 +68,6 @@ function paintMenu() {
 async function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
-  menuInput.value = "";
 
   await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
     method: "POST",
@@ -91,6 +90,7 @@ async function handleAddSubmit(e) {
     .then((data) => {
       menu[currentCategory] = data;
       paintMenu();
+      menuInput.value = "";
     });
 
   // menu[currentCategory].push({ name: newAdd });
