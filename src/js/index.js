@@ -89,11 +89,12 @@ async function handleAddSubmit(e) {
       return response.json();
     })
     .then((data) => {
-      console.log(data);
+      menu[currentCategory] = data;
+      paintMenu();
     });
+
   // menu[currentCategory].push({ name: newAdd });
   // LocalStorageSet();
-  // paintMenu();
 }
 
 // 메뉴 입력 (확인 버튼)
