@@ -15,23 +15,29 @@ let menu = {
   desert: [],
 };
 
-// const MenuApi = {
-//   async createMenu(name) {
-//     const responese = await fetch(
-//       `${BASE_URL}/category/${currentCategory}/menu`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ name }),
-//       }
-//     );
-//     if (!responese.ok) {
-//       console.error("에러가 발생했습니다.");
-//     }
-//   },
-// };
+const MenuApi = {
+  async getAllMenuByCategory(category) {
+    const responese = await fetch(
+      `${BASE_URL}/category/${currentCategory}/menu`
+    );
+    return responese.json();
+  },
+  // async createMenu(name) {
+  //   const responese = await fetch(
+  //     `${BASE_URL}/category/${currentCategory}/menu`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ name }),
+  //     }
+  //   );
+  //   if (!responese.ok) {
+  //     console.error("에러가 발생했습니다.");
+  //   }
+  // },
+};
 
 // 최초 페이지
 let currentCategory = "espresso";
@@ -86,7 +92,7 @@ function paintMenu() {
 async function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
-
+  // await MenuApi.createMenu(newAdd);
   await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
     method: "POST",
     headers: {
@@ -100,36 +106,30 @@ async function handleAddSubmit(e) {
     .then((data) => {
       console.log(data);
     });
-
-  await fetch(`${BASE_URL}/category/${currentCategory}/menu`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      menu[currentCategory] = data;
-      paintMenu();
-      menuInput.value = "";
-    });
-
-  // const createMenu = (name) => {
-  //   const responese = await fetch(
-  //     `${BASE_URL}/category/${currentCategory}/menu`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ name }),
-  //     }
-  //   );
-  //   if (!responese.ok) {
-  //     console.error("에러가 발생했습니다.");
-  //   }
-  // },
-
-  // menu[currentCategory].push({ name: newAdd });
-  // LocalStorageSet();
+  console.log(menu[currentCategory]);
+  menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
+  paintMenu();
+  menuInput.value = "";
 }
+
+// const createMenu = (name) => {
+//   const responese = await fetch(
+//     `${BASE_URL}/category/${currentCategory}/menu`,
+//     {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ name }),
+//     }
+//   );
+//   if (!responese.ok) {
+//     console.error("에러가 발생했습니다.");
+//   }
+// },
+
+// menu[currentCategory].push({ name: newAdd });
+// LocalStorageSet();
 
 // 메뉴 입력 (확인 버튼)
 function handleAddSubmitBtn(e) {
