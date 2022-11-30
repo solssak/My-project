@@ -15,6 +15,24 @@ let menu = {
   desert: [],
 };
 
+// const MenuApi = {
+//   async createMenu(name) {
+//     const responese = await fetch(
+//       `${BASE_URL}/category/${currentCategory}/menu`,
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ name }),
+//       }
+//     );
+//     if (!responese.ok) {
+//       console.error("에러가 발생했습니다.");
+//     }
+//   },
+// };
+
 // 최초 페이지
 let currentCategory = "espresso";
 
@@ -92,6 +110,22 @@ async function handleAddSubmit(e) {
       paintMenu();
       menuInput.value = "";
     });
+
+  // const createMenu = (name) => {
+  //   const responese = await fetch(
+  //     `${BASE_URL}/category/${currentCategory}/menu`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ name }),
+  //     }
+  //   );
+  //   if (!responese.ok) {
+  //     console.error("에러가 발생했습니다.");
+  //   }
+  // },
 
   // menu[currentCategory].push({ name: newAdd });
   // LocalStorageSet();
