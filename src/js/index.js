@@ -17,26 +17,78 @@ let menu = {
 
 const MenuApi = {
   async getAllMenuByCategory(category) {
-    const responese = await fetch(
-      `${BASE_URL}/category/${currentCategory}/menu`
-    );
-    return responese.json();
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`);
+    return response.json();
   },
-  // async createMenu(name) {
-  //   const responese = await fetch(
-  //     `${BASE_URL}/category/${currentCategory}/menu`,
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ name }),
-  //     }
-  //   );
-  //   if (!responese.ok) {
-  //     console.error("에러가 발생했습니다.");
-  //   }
-  // },
+  // async getAllMenuByCategory(category) {
+  //   await fetch(`${BASE_URL}/category/${category}/menu`)
+  //   .then(async(response) => {
+  //     return response.json();
+  //   }).then((data) =>{
+  //     return data
+  //   })
+  async createMenu(category, name) {
+    const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name }),
+    });
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+  },
+  // await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
+  //   method: "POST",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({ name: newAdd }),
+  // }).then((response) => {
+  //   return response.json();
+  // });
+
+  async updateMenu(category, name, menuId) {
+    const response = await fetch(
+      `${BASE_URL}/category/${category}/menu/${menuId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      }
+    );
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+    return response.json();
+  },
+
+  async toggleSoldOutMenu(category, menuId) {
+    const response = await fetch(
+      `${BASE_URL}/category/${category}/menu/${menuId}/soldout`,
+      {
+        method: "PUT",
+      }
+    );
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+  },
+
+  async deleteMenu(category, menuId) {
+    const response = await fetch(
+      `${BASE_URL}/category/${category}/menu/${menuId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!response.ok) {
+      console.error("에러가 발생했습니다.");
+    }
+  },
 };
 
 // 최초 페이지
@@ -58,10 +110,12 @@ function paintMenu() {
   menuList.innerHTML = "";
   menu[currentCategory].map((item, index) => {
     const template = `
-      <li data-menu-id=${index} class="menu-list-item d-flex items-center py-2">
-        <span class="${item.soldOut ? "sold-out" : ""} w-100 pl-2 menu-name">${
-      item.name
-    }</span>
+      <li data-menu-id=${
+        item.id
+      } class="menu-list-item d-flex items-center py-2">
+        <span class="${
+          item.isSoldOut ? "sold-out" : ""
+        } w-100 pl-2 menu-name">${item.name}</span>
         <button
         type="button"
         class="bg-gray-50 text-gray-500 text-sm mr-1 menu-sold-out-button"
@@ -92,41 +146,13 @@ function paintMenu() {
 async function handleAddSubmit(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
-  // await MenuApi.createMenu(newAdd);
-  await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ name: newAdd }),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      console.log(data);
-    });
   console.log(menu[currentCategory]);
+
+  await MenuApi.createMenu(currentCategory, newAdd);
   menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
   paintMenu();
   menuInput.value = "";
 }
-
-// const createMenu = (name) => {
-//   const responese = await fetch(
-//     `${BASE_URL}/category/${currentCategory}/menu`,
-//     {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ name }),
-//     }
-//   );
-//   if (!responese.ok) {
-//     console.error("에러가 발생했습니다.");
-//   }
-// },
 
 // menu[currentCategory].push({ name: newAdd });
 // LocalStorageSet();
@@ -146,7 +172,7 @@ function handleAddSubmitBtn(e) {
 }
 
 // 메뉴 수정
-const updateMenuName = (e) => {
+const updateMenuName = async (e) => {
   const menuId = e.target.closest("li").dataset.menuId;
 
   if (e.target.classList.contains("menu-edit-button")) {
@@ -156,46 +182,57 @@ const updateMenuName = (e) => {
       return;
     } else {
       e.target.closest("li").querySelector(".menu-name").textContent = value;
-      menu[currentCategory][menuId] = value;
-      LocalStorageSet();
+
+      // menu[currentCategory][menuId] = value;
+      // LocalStorageSet();
     }
+    await MenuApi.updateMenu(currentCategory, value, menuId);
+    menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
+    console.log(menu[currentCategory]);
   }
 };
 
 // 메뉴 삭제
-const removeMenuName = (e) => {
+const removeMenuName = async (e) => {
   const menuId = e.target.closest("li").dataset.menuId;
 
   if (e.target.classList.contains("menu-remove-button")) {
     if (confirm("이 메뉴를 삭제하시겠습니까?")) {
       e.target.closest("li").remove();
-      menu[currentCategory].splice(menuId, 1);
-      LocalStorageSet();
+      await MenuApi.deleteMenu(currentCategory, menuId);
+      menu[currentCategory] = await MenuApi.getAllMenuByCategory(
+        currentCategory
+      );
+      // menu[currentCategory].splice(menuId, 1);
+      // LocalStorageSet();
       paintMenu();
     }
   }
 };
 
 // 품절
-const soldOutMenu = (e) => {
-  const menuId = e.target.closest("li").dataset.menuId;
-
+const soldOutMenu = async (e) => {
   if (e.target.classList.contains("menu-sold-out-button")) {
-    menu[currentCategory][menuId].soldOut =
-      !menu[currentCategory][menuId].soldOut;
-    LocalStorageSet();
+    const menuId = e.target.closest("li").dataset.menuId;
+    await MenuApi.toggleSoldOutMenu(currentCategory, menuId);
+    menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
+    // menu[currentCategory][menuId].soldOut =
+    //   !menu[currentCategory][menuId].soldOut;
+    // LocalStorageSet();
+    console.log(menu[currentCategory]);
     paintMenu();
   }
 };
 
 // 카테고리명 출력
-const handleNav = (e) => {
+const handleNav = async (e) => {
   const isCategoryButton = e.target.classList.contains("cafe-category-name");
   if (isCategoryButton) {
     currentCategory = e.target.dataset.categoryName;
     document.querySelector(
       "#category-name"
     ).textContent = `${e.target.textContent} 메뉴 관리`;
+    menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
     paintMenu();
   }
 };
