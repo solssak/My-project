@@ -21,10 +21,12 @@ const MenuApi = {
     return response.json();
   },
   // async getAllMenuByCategory(category) {
-  //   await fetch(`${BASE_URL}/category/${category}/menu`)
-  //   .then(async(response) => {
-  //     return response.json();
-  //   }).then((data) =>{
+  //   await fetch(`${BASE_URL}/category/${category}/menu`).then(
+  //     async (response) => {
+  //       return response.json();
+  //     }
+  //   );
+  // }.then((data) =>{
   //     return data
   //   })
   async createMenu(category, name) {
@@ -39,15 +41,6 @@ const MenuApi = {
       console.error("에러가 발생했습니다.");
     }
   },
-  // await fetch(`${BASE_URL}/category/${currentCategory}/menu`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({ name: newAdd }),
-  // }).then((response) => {
-  //   return response.json();
-  // });
 
   async updateMenu(category, name, menuId) {
     const response = await fetch(
@@ -150,12 +143,10 @@ async function handleAddSubmit(e) {
 
   await MenuApi.createMenu(currentCategory, newAdd);
   menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
+  console.log(menu[currentCategory]);
   paintMenu();
   menuInput.value = "";
 }
-
-// menu[currentCategory].push({ name: newAdd });
-// LocalStorageSet();
 
 // 메뉴 입력 (확인 버튼)
 function handleAddSubmitBtn(e) {
