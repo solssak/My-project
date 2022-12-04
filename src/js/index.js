@@ -20,15 +20,6 @@ const MenuApi = {
     const response = await fetch(`${BASE_URL}/category/${category}/menu`);
     return response.json();
   },
-  // async getAllMenuByCategory(category) {
-  //   await fetch(`${BASE_URL}/category/${category}/menu`).then(
-  //     async (response) => {
-  //       return response.json();
-  //     }
-  //   );
-  // }.then((data) =>{
-  //     return data
-  //   })
   async createMenu(category, name) {
     const response = await fetch(`${BASE_URL}/category/${category}/menu`, {
       method: "POST",
