@@ -140,16 +140,21 @@ async function handleAddSubmit(e) {
 }
 
 // 메뉴 입력 (확인 버튼)
-function handleAddSubmitBtn(e) {
+async function handleAddSubmitBtn(e) {
   e.preventDefault();
   const newAdd = menuInput.value;
-  menuInput.value = "";
   if (newAdd === "") {
     alert("메뉴 이름을 입력해주세요.");
   } else {
-    menu[currentCategory].push({ name: newAdd });
-    LocalStorageSet();
+    await MenuApi.createMenu(currentCategory, newAdd);
+    menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
+    console.log(menu[currentCategory]);
     paintMenu();
+
+    menuInput.value = "";
+    // menu[currentCategory].push({ name: newAdd });
+    // LocalStorageSet();
+    // paintMenu();
   }
 }
 
