@@ -152,9 +152,6 @@ async function handleAddSubmitBtn(e) {
     paintMenu();
 
     menuInput.value = "";
-    // menu[currentCategory].push({ name: newAdd });
-    // LocalStorageSet();
-    // paintMenu();
   }
 }
 
