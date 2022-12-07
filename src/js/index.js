@@ -200,9 +200,6 @@ const soldOutMenu = async (e) => {
     const menuId = e.target.closest("li").dataset.menuId;
     await MenuApi.toggleSoldOutMenu(currentCategory, menuId);
     menu[currentCategory] = await MenuApi.getAllMenuByCategory(currentCategory);
-    // menu[currentCategory][menuId].soldOut =
-    //   !menu[currentCategory][menuId].soldOut;
-    // LocalStorageSet();
     console.log(menu[currentCategory]);
     paintMenu();
   }
